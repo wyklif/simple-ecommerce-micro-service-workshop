@@ -7,6 +7,8 @@ import com.cliff.ecommerce.exception.BusinessException;
 import com.cliff.ecommerce.kafka.OrderConfirmation;
 import com.cliff.ecommerce.orderline.OrderLineRequest;
 import com.cliff.ecommerce.orderline.OrderLineService;
+import com.cliff.ecommerce.payment.PaymentClient;
+import com.cliff.ecommerce.payment.PaymentRequest;
 import com.cliff.ecommerce.product.ProductClient;
 import com.cliff.ecommerce.product.PurchaseRequest;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,6 +27,7 @@ public class OrderService {
     private final OrderMapper orderMapper;
     private final OrderLineService orderLineService;
     private final OrderProducer orderProducer;
+    private final PaymentClient paymentClient;
     public Integer createOrder(OrderRequest request) {
         // check the customer --> Open Feign
         var customer = this.customerClient.findCustomerById(request.customerId())
@@ -47,7 +50,16 @@ public class OrderService {
             );
 
         }
-        // todo start payment process
+
+        var paymentRequest = new PaymentRequest(
+                request.amount(),
+                request.paymentMethod(),
+                order.getId(),
+                order.getReference(),
+                customer
+        );
+
+        paymentClient.requestOrderPayment(paymentRequest);
         //send order confirmation to notification ms (Kafka)
         orderProducer.sendOrderConfirmation(
                 new OrderConfirmation(
