@@ -20,7 +20,7 @@ public class OrderLineMapper {
                 .build();
     }
 
-    public Object toOrderLineResponse(OrderLine orderLine) {
+    public OrderLineResponse toOrderLineResponse(OrderLine orderLine) {
         return new OrderLineResponse(orderLine.getId(), orderLine.getQuantity());
     }
 }

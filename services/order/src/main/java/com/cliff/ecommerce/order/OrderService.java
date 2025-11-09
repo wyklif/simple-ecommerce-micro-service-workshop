@@ -1,7 +1,7 @@
 package com.cliff.ecommerce.order;
 
 
-import com.cliff.ecommerce.OrderProducer;
+import com.cliff.ecommerce.kafka.order.OrderProducer;
 import com.cliff.ecommerce.customer.CustomerClient;
 import com.cliff.ecommerce.exception.BusinessException;
 import com.cliff.ecommerce.kafka.OrderConfirmation;
